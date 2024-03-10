@@ -8,6 +8,7 @@ import tkinter as tk
 from tkinter import messagebox
 import random
 import pyperclip
+import json
 
 #--------------For generating password------------------------
 letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
@@ -37,25 +38,49 @@ def generate_pword():
     pyperclip.copy(pword_str) #copies the password to clipboard
 
 def add_f():
-    x=entry_web.get() #storing what is typed in the web entry.
-    y=entry_email.get() # stores email entry
-    z=entry_password.get() #stores password
+    website=entry_web.get() #storing what is typed in the web entry.
+    email=entry_email.get() # stores email entry
+    password=entry_password.get() #stores password
 
-    if x =="" or y =="" or z =="":
+    data_for_json={website:{"email:": email,"password:": password}}
+
+    if website =="" or email =="" or password =="":
         messagebox.showinfo(title="ERROR",message="You NEED to fill all the fields!!")
 
-    # elif  x !="" or y!="" or z!="":
+    # elif  website !="" or email!="" or password!="":
     else:
         is_a= messagebox.askokcancel(title="Confirmation",\
-                                 message=f"You entered the following:\n Website: {x}\n Email: {y}\n Password: {z}")
-    #the variable used (is_a) will automatically store when OK is selected.
+                                 message=f"You entered the following:\n Website: {website}\n Email: {email}\n Password: {password}")
+    #the variable used (is_a) will automatically assume/store when OK is selected.
 
         if is_a: #means when OK is selected.
-            with open("Results.txt", "a") as results:  # a here means append
-                results.write(f" {x} | {y} | {z} \n")  # \n so that the next entry is added in a newline
+            try:
+                with open("Results.json", "r") as results:
+                    # json.dump(data_for_json,results, indent=3) #this is for WRITING.
+                    # json.dump (content, file to write on, indent value so that json is displayed correctly)
+                    data1=json.load(results)
+                    data1.update(data_for_json)
 
+            except FileNotFoundError: # to catch if the file itself does not exist.
+                with open("Results.json", "w") as results:
+                    json.dump(data_for_json, results, indent=3)
+
+            except ValueError: #to catch error if the file exists but the content is NOT JSON
+                with open("Results.json", "w") as results:
+                    json.dump(data_for_json, results, indent=3)
+
+            else:
+                with open ("Results.json", "w") as results:
+                    json.dump(data1,results,indent=3)
+
+            finally:
                 entry_web.delete(0, tk.END)  # clear the web entry widget
                 entry_password.delete(0, tk.END)  # clear the password entry widget
+
+            # #-------jh: the following is for reading JSON file---
+            # with open ("Results.json", "r") as data_file:
+            #     data_json_to_dict= json.load(data_file)
+            #     print(data_json_to_dict, type(data_for_json))
 
         else: #when cancel is selected
             pass

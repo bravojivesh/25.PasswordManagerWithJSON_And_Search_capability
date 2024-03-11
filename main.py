@@ -85,10 +85,27 @@ def add_f():
         else: #when cancel is selected
             pass
 
+def search_f():
+    input1=entry_web.get()
+
+    try:
+        with open("Results.json", "r") as results:
+            data_load = json.load(results)
+
+        email_for_search= data_load[input1]["email:"]
+        password_for_search=data_load[input1]["password:"]
+
+    except:
+        messagebox.askokcancel(title="Search Results", \
+                               message=f"NO RECORDS FOUND")
+
+    else:
+        messagebox.askokcancel(title="Search Results", \
+                               message=f" Email: {email_for_search} \n Password:{password_for_search} ")
 
 
 
-#++++++++++++++++++UI PARt++++++++++++++++++++++++++++++++++++
+#++++++++++++++++++UI PART++++++++++++++++++++++++++++++++++++
 window1=tk.Tk()
 window1.title("Password Manager")
 window1.config (padx=30, pady=30)
@@ -108,23 +125,26 @@ email_label.grid(column=0,row=2)
 password_label=tk.Label(text="Password",font=("Arial", 14))
 password_label.grid(column=0,row=3)
 
-entry_web = tk.Entry(width=40, font=("Helvetica", 22))
+entry_web = tk.Entry(width=30, font=("Helvetica", 22))
 #width and font size BOTH will change the size and position of the
 #the entry
-entry_web.grid(column=1,row=1,columnspan=4)
+entry_web.grid(column=1,row=1)
 entry_web.focus()
 
 entry_email = tk.Entry(width=40, font=("Helvetica", 22))
-entry_email.grid(column=1, row=2,columnspan=4)
+entry_email.grid(column=1, row=2,columnspan=2)
 entry_email.insert(0, "something@email.com") #this adds some text as a default value
 
 entry_password = tk.Entry(width=30, font=("Helvetica", 22))
 entry_password.grid(column=1, row=3)
 
-button1 = tk.Button(text="Generate Password", width=17,font=("Helvetica", 12),fg="Blue",bg="white",command=generate_pword)
+button1 = tk.Button(text="Generate Password", width=16,font=("Helvetica", 12),fg="Blue",bg="white",command=generate_pword)
 button1.grid(column=2, row=3)
 
-button2 = tk.Button(text="Add", width=58,font=("Helvetica", 15),fg="Blue",bg="white",command=add_f)
+button2 = tk.Button(text="Add", width=57,font=("Helvetica", 15),fg="Blue",bg="white",command=add_f)
 button2.grid(column=1, row=4,columnspan=5)
+
+button3_search = tk.Button(text="Search", width=16,font=("Helvetica", 12),fg="Blue",bg="white",command=search_f)
+button3_search.grid(column=2,row=1)
 
 window1.mainloop()

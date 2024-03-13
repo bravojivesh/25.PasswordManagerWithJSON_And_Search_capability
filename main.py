@@ -42,7 +42,7 @@ def add_f():
     email=entry_email.get() # stores email entry
     password=entry_password.get() #stores password
 
-    data_for_json={website:{"email:": email,"password:": password}}
+    data_for_json={website:{"email:": email,"password:": password}} #nested dictionary. This is for the JSON file.
 
     if website =="" or email =="" or password =="":
         messagebox.showinfo(title="ERROR",message="You NEED to fill all the fields!!")
@@ -61,11 +61,11 @@ def add_f():
                     data1=json.load(results)
                     data1.update(data_for_json)
 
-            except FileNotFoundError: # to catch if the file itself does not exist.
+            except FileNotFoundError: # to catch if the file itself does not exist. Will write the data as the first entry.
                 with open("Results.json", "w") as results:
                     json.dump(data_for_json, results, indent=3)
 
-            except ValueError: #to catch error if the file exists but the content is NOT JSON
+            except ValueError: #to catch error if the file exists but the content is NOT JSON. Will write the data in JSON.
                 with open("Results.json", "w") as results:
                     json.dump(data_for_json, results, indent=3)
 
@@ -95,7 +95,12 @@ def search_f():
         email_for_search= data_load[input1]["email:"]
         password_for_search=data_load[input1]["password:"]
 
-    except:
+    except FileNotFoundError: # When the file does not exist.
+        messagebox.askokcancel(title="Search Results", \
+                               message=f"FILE DOES NOT EXIST")
+
+    except KeyError: # When the file exists, but key does not exist; in other words,
+        # the data does not exist for the user entered input.
         messagebox.askokcancel(title="Search Results", \
                                message=f"NO RECORDS FOUND")
 
